@@ -1,9 +1,10 @@
-import Navbar from "./components/Navbar";
+import MainLayout from "./layouts/MainLayout";
+
 
 const App = () => {
     return (
-        <div>
-<Navbar/>          
+        <div>    
+            <MainLayout/>     
         </div>
     );
 };
