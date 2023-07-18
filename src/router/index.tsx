@@ -19,10 +19,12 @@ const router = createBrowserRouter([
       {
         path:'/books',
         element:<Books/>
-      },{
+      },
+      {
         path:'/editbook/:id',
         element:<EditBook/>
-      },{
+      },
+      {
         path:'/bookdetails/:id',
         element:<EditBook/>
       },{
@@ -42,3 +44,4 @@ const router = createBrowserRouter([
 ]);
 
 export default router;
+ 
