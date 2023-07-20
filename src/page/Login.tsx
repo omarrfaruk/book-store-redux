@@ -1,62 +1,87 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+import React, { useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { useAppDispatch, useAppSelector } from '../redux/hook';
+import { loginUser } from '../redux/features/user/userSlice';
+import { useNavigate } from 'react-router-dom';
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+const App: React.FC = () => {
+  const { handleSubmit, control, formState:{errors} } = useForm<LoginForm>();
+  const dispatch = useAppDispatch()
+  const { user, isLoading } = useAppSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  const onSubmit =async (data: LoginForm) => {
+    // Handle login logic here
+   await dispatch(loginUser({ email: data.email, password: data.password }));
+    
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Add your form submission logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
-  };
+  useEffect(() => {
+    if (user.email && !isLoading) {
+      navigate('/');
+    }
+  }, [user.email, isLoading]);
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex justify-center items-center h-screen">
       <form
-        className="w-full max-w-sm p-4 bg-white rounded shadow-md"
-        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3"
+        onSubmit={handleSubmit(onSubmit)}
       >
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
         <div className="mb-4">
-          <label className="block mb-2 text-gray-800" htmlFor="email">
-            Email:
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            Email
           </label>
-          <input
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            type="email"
-            id="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <input
+                {...field}
+                id="email"
+                type="email"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Email"
+              />
+            )}
           />
+           {errors.email && <p>{errors.email.message}</p>}
         </div>
-        <div className="mb-4">
-          <label className="block mb-2 text-gray-800" htmlFor="password">
-            Password:
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            Password
           </label>
-          <input
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            type="password"
-            id="password"
-            value={password}
-            onChange={handlePasswordChange}
-            required
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <input
+                {...field}
+                id="password"
+                type="password"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Password"
+              />
+            )}
           />
+          {errors.password && <p>{errors.password.message}</p>}
         </div>
-        <div className="text-center">
+        <div className="flex items-center justify-between">
           <button
-            className="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:shadow-outline"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
-            Sign Up
+            Sign In
           </button>
         </div>
       </form>
@@ -64,6 +89,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
-      
-
+export default App;
